@@ -6,8 +6,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "secret"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
-KEY = "Qs"
-
 debug = DebugToolbarExtension(app)
 
 @app.route('/')
@@ -16,12 +14,12 @@ def render_start():
 
 @app.route('/begin', methods=["POST"])
 def start():
-    session[KEY] = []
+    session["responses"] = []
     return redirect("/question/0")
 
 @app.route("/question/<int:i>")
 def render_questions(i):
-    responses = session.get(KEY)
+    responses = session.get("responses")
 
     if responses == None:
         return redirect("/")
@@ -38,9 +36,9 @@ def render_questions(i):
 def answer_questions():
     answer = request.form['answer']
 
-    responses = session[KEY]
+    responses = session["responses"]
     responses.append(answer)
-    session[KEY] = responses
+    session["responses"] = responses
 
     if len(responses) == len(survey.questions):
         return redirect("/complete")
